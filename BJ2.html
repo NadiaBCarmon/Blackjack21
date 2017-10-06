@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blackjack 21</title>
+
+	<style type="text/css">
+
+	body{
+		background-image: url('BJTable.png');
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: fixed;
+	}
+
+	#yhand{
+		background-color: green;
+		display: inline-block;
+		font-weight: bold;
+		font-size: 25px;
+		padding: 5px;
+		border-radius: 50px;
+		color: black;
+		height: 60px;
+		width: 110px;
+		border: solid;
+	}
+
+	#ph1{
+		display: inline-block;
+		float: center; left;
+		padding: 20px;
+		font-size: 35px;
+		height: 25px;	
+	}
+
+	#hit{
+		height: 55px;
+		width: 85px;
+		font-size: 25px;
+		font-weight: bold;
+	}
+
+	#stay{
+		height: 55px;
+		width: 85px;
+		font-size: 25px;
+		font-weight: bold;
+	}
+
+	#deal{
+		height: 55px;
+		width: 85px;
+		font-size: 25px;
+		font-weight: bold;
+	}
+
+
+	#bets{
+		background-color: green;
+		float: center; left;
+		display: inline-block;
+		float: center; left;
+		font-weight: bold;
+		font-size: 25px;
+		padding: 20px;
+		text-align: center;
+		border-radius: 50px;
+		color: black;
+		height: 25px;
+		width: 80px;
+		border: solid;
+		top: 60px;
+	}
+
+	#bettextbox{
+		height: 50px;
+		width: 220px;
+		font-size: 40px;
+		font-weight: bold;
+		padding: 5px;
+	}
+
+
+	#betinput{
+		display: inline-block;
+		float: center;
+		padding: 5px;
+		float: center;
+	}
+
+	#submit2{
+		height: 55px;
+		width: 100px;
+		font-size: 25px;
+		font-weight: bold;
+	}
+
+	#submit{
+		display: inline-block;
+		float: center; right;
+	}
+
+
+	#earningsoutput{
+		position: relative;
+		top: 20px;
+		vertical-align: middle;  	
+	}
+
+	#dhand{
+		background-color: green;
+		display: inline-block;
+		font-weight: bold;
+		font-size: 25px;
+		padding: 9px;
+		border-radius: 50px;
+		color: black;
+		height: 60px;
+		width: 110px;
+		border: solid;
+	}
+
+	#dh1{
+		display: inline-block;
+		float: center; left;
+		padding: 20px;
+		font-size: 35px;
+		height: 25px;
+	}
+
+	h1{
+		color: white;
+		font-size: 35px;
+	}
+
+	#cardsdisplay {
+		display: inline-block;
+		position: fixed;
+	}
+
+	#dice {
+		display: inline-block;
+		float: right; 
+		position: relative;
+		right: 160px;
+		bottom: -40px;
+	}
+
+	#jpborder {
+	}
+
+	#jackpot {
+		font-size: 65px;
+	}
+
+	#dealer1 {
+		font-size: 75px;
+	}
+
+	#player1 {
+
+		font-size: 75px;
+	}
+
+	</style>
+
+</head>
+
+<body>
+
+
+	<center><div id="yhand">Your Hand:</div> 
+			
+
+			<div id="ph1"><h2 id="player1"></h2></div>
+	</center>
+
+	<br />
+	<br />
+
+	<center>
+ 		<button onclick="p1Hit()"  id="hit">Hit</button>
+		<button onclick="p1Stay()" id="stay">Stay</button>
+		<button onclick="randomCard()" id="deal">Deal</button>
+	</center>
+
+	<center>
+		<h1 id="winorlose"></h1>
+	</center>
+
+	<br />
+	
+	<div id="cardsdisplay"><img src="cardsdisplay.png" position="fixed"></img></div> 
+	<center> <div id="dhand">Dealer's Hand:</div> 
+		     <div id="dh1"><h2 id="dealer1"></h2></div>
+	</center>
+	<div id="dice"><img src="dice2.png" position="absolute" height="100px" width="90px"></img></div>
+
+	<br />
+
+	<center>
+		<div id="jpborder"><h2 id="jackpot"></h2></div>
+	</center>
+
+	<!-- If you win,add to earnings. If lose, subtract from earnings -->
+	
+			<div id="earningsoutput" align="right"><h2 id="earn"></h2></div>
+
+	<!--Trying moving image to CSS, play with it there-->
+
+	<script type="text/javascript">
+
+		//CREATE INVISIBLE TEXTBOX - MAKE BORDER/BACKGROUND SAME COLOR AS CASINO CHIP// 
+
+		var deck = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+		var player = [];
+		var dealer = [];
+		var cardImages = ['aceofspades.png', '2diamonds.png', '3clubs.png', '4hearts2.png', '5spades.png', '6diamonds.png', '7clubs.png', '8hearts.png', '9spades.png', '10diamonds.png', 'jackclubs.png', 'queenhearts', 'kingspades.png'];
+
+		//ADD CARD IMAGES + SOUND EFFECTS//
+
+					//Prompt - Place Bet//
+
+						//document.getElementById('jackpot').innerHTML = prompt("Place Bet (Min: $5, Max: $500)");
+					
+						//if(document.getElementById('jackpot').innerHTML = '$' && (NaN == true)) {
+
+						//alert("Your Bet Must Be Between $5 and $500");
+						//prompt("Place Bet (Min: $5, Max: $500)");
+						//}
+
+						//else{
+							//document.getElementById('jackpot').innerHTML = '$' + prompt("Place Bet (Min: $5, Max: $500)");
+						//}
+	
+
+					//----------------------------------------------------------------//
+
+						function evalCards(arr) {
+
+							var sum = 0;
+
+							for(var i=0; i<arr.length; i++){
+
+								if(arr[i] == "2") {
+									sum += 2;
+								}//End of If Statement//
+
+								else if(arr[i] == "3") {
+									sum += 3;
+								}//End of If Statement//
+
+								else if(arr[i] == "4") {
+									sum += 4;
+								}//End of If Statement//
+
+								else if(arr[i] == "5") {
+									sum += 5;
+								}//End of If Statement//
+
+
+								else if(arr[i] == "6") {
+									sum += 6;
+								}//End of If Statement//
+
+								else if(arr[i] == "7") {
+									sum += 7;
+								}//End of If Statement//
+
+								else if(arr[i] == "8") {
+									sum += 8;
+								}//End of If Statement//
+
+								else if(arr[i] == "9") {
+									sum += 9;
+								}//End of If Statement//
+
+
+								else if(arr[i] == "10") {
+									sum += 10;
+								}//End of If Statement//
+
+								else if(arr[i] == "J") {
+									sum += 10;
+								}//End of If Statement//
+
+								else if(arr[i] == "Q") {
+									sum += 10;
+								}//End of If Statement//
+
+								else if(arr[i] == "K") {
+									sum += 10;
+								}//End of If Statement//
+
+								//ACE = 1 or 11/
+								else if(arr[i] == "A" && sum <= 10) {
+									sum += 11;
+								}//End of If Statement//
+
+								else{
+									sum += 1;
+								}//End of Else Statement//
+
+							}//End of For Loop//
+
+							return sum;
+
+						}//End of function evalCards(arr)//
+
+
+						//Create a Function to Restart Game By Dealing 2 New Cards to Player and Dealer//
+
+						function randomCard() {
+
+							//Use Empty Array//
+							player = [];
+							dealer = [];
+
+							var randomp1 = parseInt(Math.random()* 13);
+							var randomph2 = parseInt(Math.random()* 13);
+							var randomd1 = parseInt(Math.random()* 13);
+							var randomdh2 = parseInt(Math.random()* 13);
+
+					//---------------------------------------------------------------//
+					
+
+					//Append Child - Blank Cards for the Dealer// 
+					//var blankCard = createElement("img");
+
+					//blankCard.src = "C:/Users/moder/Desktop/Blackjack/dcard.png";
+
+					//var src = document.getElementById("blankCard");
+
+					//src.appendChild(blankCard);
+
+					
+
+							//Declare Player and Dealer's Hands Globally//
+							//-And-//
+							//With deck[randomp1] - Give Each Hand A Random "Card" Via the Deck Index//					
+							player.push(deck[randomp1]);
+							player.push(deck[randomph2]);  
+							dealer.push(deck[randomd1]);
+							dealer.push(deck[randomdh2]);
+
+							//Display Elements Within A Pus - 2 String or Join. 
+							//.toString Automatically Puts Comma In Between//
+							//Join - Allows You To Put Whatever You Want In Between//
+							document.getElementById('player1').innerHTML = player.join(" "); 
+							//document.getElementById('dealer1').innerHTML = dealer.join(" "); 
+
+							var evalPlayer = evalCards(player);
+							var evalDealer = evalCards(dealer);
+
+							//If Player Gets 21 && Dealer Is Less Than 21//
+							if(evalPlayer == 21 && evalDealer < 21) {
+								document.getElementById('winorlose').innerHTML = "You Win!"
+							}//End of If Statement//
+
+
+							//If Dealer Gets 21 && Player Is Less Than 21//
+							else if(evalDealer == 21 && evalPlayer < 21) {
+								document.getElementById('winorlose').innerHTML = "You Lose :("
+							}//End of If Statement//
+
+							//When "Deal" is clicked, the innerHTML of id = 'winorlose' should be blank//
+							document.getElementById('winorlose').innerHTML = " "; 
+
+							
+							randomsuits = [];
+							var suits = ["♣", "♦", "♥", "♠"];
+							var dsuits = parseInt(Math.random()* 4);
+							var dsuits2 = parseInt(Math.random()* 4);
+
+							randomsuits.push(suits[dsuits]);
+							randomsuits.push(suits[dsuits2]);
+
+							document.getElementById('dealer1').innerHTML = randomsuits.join(" "); 
+							
+							//Append Image To Element Id//
+    						//var img = document.createElement("IMG");
+    						//img.src = "dcard.png";
+    						//document.getElementById('cardback1').appendChild(img);
+    						//document.getElementById('cardback2').appendChild(img);
+
+						
+
+						}//End of randomCard() function//)
+
+					//---------------------------------------------------------------------//
+		
+						//If the player Hits, another card is given to them and their hand is reevaluated. If they get 21 they win, but if they go over 21 they bust, which means they lose. //
+						
+						function p1Hit() {
+
+							//Player 1 Hand 3//
+							
+							//Hit - Deal Another Card To Player1//
+
+							var random = parseInt(Math.random()* 13);
+
+							player.push(deck[random]);
+
+							document.getElementById('player1').innerHTML = player.join(" ");
+
+							var evalPlayer = evalCards(player);
+							var evalDealer = evalCards(dealer);
+
+
+							if(evalPlayer > 21 && evalDealer <= 21) {
+								document.getElementById('winorlose').innerHTML = "You Lose :("
+							}//End of Else If Statement//
+
+							else if(evalPlayer <= 21 && evalDealer > 21) {
+								document.getElementById('winorlose').innerHTML = "You Win!"
+							}//End of Else If Statement//
+
+							else if(evalPlayer <= 21 && evalPlayer > evalDealer) {
+								document.getElementById('winorlose').innerHTML = "You Win!"
+							}//End of Else If Statement//
+
+							else if(evalDealer <= 21 && evalDealer > evalPlayer) {
+								document.getElementById('winorlose').innerHTML = "You Lose :("
+							}//End of Else If Statement//
+
+							else{
+								document.getElementById('winorlose').innerHTML = "It's A Draw"
+							}//End of Else Statement//
+
+
+							//Show Dealer's Hand When Function is Clicked//
+							document.getElementById('dealer1').innerHTML = dealer.join(" "); 
+
+			
+						}//End of p1Hit() function//
+
+					//----------------------------------------------------------------------//		
+
+						//If They Stay, Both the Players and Dealers Cards are Reevaluated and Whoever is Closest to 21 Wins//	
+
+
+						function p1Stay() {
+
+							var evalPlayer = evalCards(player);
+							var evalDealer = evalCards(dealer);
+
+							if(evalPlayer > 21 && evalDealer <= 21) {
+								document.getElementById('winorlose').innerHTML = "You Lose :("
+							}//End of Else If Statement//
+
+							else if(evalPlayer <= 21 && evalDealer > 21) {
+								document.getElementById('winorlose').innerHTML = "You Win!"
+							}//End of Else If Statement//
+
+							else if(evalPlayer <= 21 && evalPlayer > evalDealer) {
+								document.getElementById('winorlose').innerHTML = "You Win!"
+							}//End of Else If Statement//
+
+							else if(evalDealer <= 21 && evalDealer > evalPlayer) {
+								document.getElementById('winorlose').innerHTML = "You Lose :("
+							}//End of Else If Statement//
+
+
+							else{
+								document.getElementById('winorlose').innerHTML = "It's A Draw"
+							}//End of Else Statement//
+
+							//Show Dealer's Hand When Function is Clicked//
+							document.getElementById('dealer1').innerHTML = dealer.join(" "); 
+
+						}//End of p1Stay Function//
+
+					//--------------------------------------------------------------------------------//
+
+					//**********Every game the player is given the option to LOWER OR RAISE THEIR BET + SEE EARNINGS. If they win they get earn what they betted, if they lose they lose what they betted, if there is a tie nothing happens.//
+
+					//- GET BET BEFORE
+					//function placeBet() { 
+
+						
+							//document.getElementById('earn').innerHTML = parseInt(document.getElementById('bet').value); 
+
+							
+							//if(document.getElementById('winorlose').innerHTML == "You Win!") {
+
+
+							//}//End of If Statement//
+
+							
+							//else if(document.getElementById('winorlose').innerHTML = "You Lose :(") {
+
+							//}//End of Else If Statement//
+
+
+							//else{
+
+							//}
+
+						//}//End of placeBet Function//
+
+					//------------------------------------------------------------//
+	</script>
+
+</body>
+</html>
